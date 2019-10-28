@@ -51,6 +51,10 @@ String htmlData = request.getParameter("content1") != null ? request.getParamete
 			<input type="text" name="title" id="title" class="form-control"/>
 		</div>
 		<div class="form-group">
+			<label for="terms"><span style="color:blue;font-size: 15px;font-weight: bold">标签</span></label>
+			<input type="text" name="terms" id="terms" class="form-control"/>
+		</div>
+		<div class="form-group">
 			<label for="centent"><span style="color:blue;font-size: 15px;font-weight: bold">文章内容</span></label>
 			<textarea rows="10" id="centent" cols="30" name="content1" style="width: 825px;"></textarea>
 		</div>
@@ -59,12 +63,12 @@ String htmlData = request.getParameter("content1") != null ? request.getParamete
 		<div class="form-group form-inline">
 		<label for="channelId">所属栏目<span style="font-weight: bold;font-size: 20px">:</span></label>
 			<select class="form-control form-control-sm" name="channelId" id="channelId">
-			  <option>请选择</option>
+			  <option value="-1">请选择</option>
 			</select>
 			&nbsp;&nbsp;&nbsp;&nbsp;
 		<label for="categoryId">所属类型<span style="font-weight: bold;font-size: 20px">:</span></label>
 			<select class="form-control form-control-sm" name="categoryId" id="categoryId">
-			  <option>请选择</option>
+			  <option value="-1">请选择</option>
 			</select>
 		</div>
 		<div class="form-group form-inline">
@@ -76,11 +80,62 @@ String htmlData = request.getParameter("content1") != null ? request.getParamete
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="button" class="btn btn-outline-success" value="发布" onclick="publish()"/>
+			<input type="submit" class="btn btn-outline-success" value="发布"/>
 		</div>
 	</form>
 </body>
+<script type="text/javascript" src="/resource/js/jquery.validate.js"></script>
 <script type="text/javascript">
+	$(function(){
+		$("#form1").validate({
+			rules:{
+				title:{
+					required:true,
+				},
+				channelId:{
+					min:1,
+				},
+				categoryId:{
+					min:1,
+				}
+			},
+			messages:{
+				title:{
+					required:"标题不能为空",
+				},
+				channelId:{
+					min:"栏目不能为空",
+				},
+				categoryId:{
+					min:"文章分类不能为空",
+				}
+			},
+			submitHandler:function(){
+				var formData = new FormData($("#form1")[0]);
+				formData.set("content",editor1.html());
+				$.ajax({
+					url:"/my/publish",
+					type:"post",
+					data:formData,
+					processData:false,
+					contentType:false,
+					success:function(flag){
+						if(flag){
+							alert("发布成功");
+							location.href="/my";
+						}else{
+							alert("发布失败,请重新登录账号后再试试");
+						}
+					}
+				})
+			}
+		})
+	})
+
+
+
+
+
 	$(function(){
 		$.post("/my/selectsChannel",function(channels){
 			for (var i = 0; i < channels.length; i++) {
@@ -97,25 +152,6 @@ String htmlData = request.getParameter("content1") != null ? request.getParamete
 			})
 		})
 	})
-	function publish(){
-		var formData = new FormData($("#form1")[0]);
-		formData.set("content",editor1.html());
-		$.ajax({
-			url:"/my/publish",
-			type:"post",
-			data:formData,
-			processData:false,
-			contentType:false,
-			success:function(flag){
-				if(flag){
-					alert("发布成功");
-					location.href="/my"
-				}else{
-					alert("发布失败,请重新登录账号后再试试");
-				}
-			}
-		})
-	}
 </script>
 </html>
 

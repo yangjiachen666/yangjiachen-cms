@@ -34,7 +34,9 @@
 			<option value="0">未审核</option>
 			<option value="1">已审核</option>
 			<option value="-1">驳回</option>
-		</select>
+		</select>&nbsp;
+		<label for="terms"><span style="font-family: '楷体';font-size:20px;color: red;" class="font-weight-bolder">文章标签:</span></label>
+		<input type="text" id="terms" name="terms" class="form-control" value="${article.terms }"/>
 		&nbsp;<button class="btn btn-outline-primary btn-sm" onclick="getArticleByTitle()">查询</button>
 	</div>
 	<table class="table table-striped table-bordered" style="font-size: 12px;">
@@ -45,7 +47,7 @@
 			<td>文章所属栏目</td>
 			<td>文章所属类型</td>
 			<td>是否热门</td>
-			<td>文章点击量</td>
+			<td>标签</td>
 			<td>文章状态</td>
 			<td>操作</td>
 		</tr>
@@ -64,7 +66,7 @@
 						是
 					</c:if>
 				</td>
-				<td>${a.hits }条点击</td>
+				<td>${a.terms }</td>
 				<td>${a.status==0?'未审核':a.status==1?'已审核':'驳回' }</td>
 				<td>
 					<button onclick="updateArticle(${a.id})" class="btn-light">修改</button>
@@ -82,7 +84,8 @@
 	function getArticleByTitle(){
 		var title = $("[name=title]").val();
 		var status = $("[name=status]").val();
-		$("#center").load("/my/selectsByUser?title="+title+"&status="+status);
+		var terms = $("[name=terms]").val();
+		$("#center").load("/my/selectsByUser?title="+title+"&status="+status+"&terms="+terms);
 	}
 	$(function(){
 		$("[name=status]").val('${article.status}')

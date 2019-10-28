@@ -22,7 +22,9 @@
 		<h3>${article.title }</h3>
 		<br>
 		<dl>
-			<dd style="color: gray;">${article.user.username }   &nbsp;&nbsp;&nbsp;&nbsp;<fmt:formatDate value="${article.created }" pattern="yy-MM-dd HH:mm:ss"/> </dd>
+			<dd style="color: gray;">${article.user.username }   &nbsp;&nbsp;&nbsp;&nbsp;<fmt:formatDate value="${article.created }" pattern="yy-MM-dd HH:mm:ss"/> 
+				标签:${article.terms }
+			</dd>
 		</dl>
 		<hr>
 		<hr>

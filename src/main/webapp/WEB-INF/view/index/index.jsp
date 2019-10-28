@@ -28,7 +28,7 @@
 					 <br>
 					<ul class="list-group">
 						  <li style="width:110px;height: 40px;list-style: none;padding-top: 5px;margin-top: 5px; " class="cms-list-group-item-action ${article.channelId==null?'cms-list-group-item-active':''}  ">
-						    <a class="channel" style="color: black" href="?channelId=-1">热门</a>
+						    <a class="channel" style="color: black" href="?hot=1">热门</a>
 						  </li>
 					 </ul>
 				<ul class="list-group">
@@ -61,7 +61,7 @@
 					<!-- 发布文章 -->
 					<c:forEach items="${articles}" var="a">
 						<div class="media">
-							<img alt="" src="/pic/${a.picture }"  style="width:190px; height: 124px;">
+							<img alt="" src="/pic/${a.picture }" class="mr-3"  style="width:190px; height: 124px;">
 							 <div class="media-body">
 							 	  <h1 class="mt-0"><a style="color:black" href="select?id=${a.id }" target="blank">${a.title }</a></h1>&nbsp;&nbsp;&nbsp;&nbsp;
 							 	  <span style="color:gray;font-size: 15px">作者:${a.user.username } &nbsp;&nbsp; ${a.hits }条评论  &nbsp;&nbsp;&nbsp; <fmt:formatDate value="${a.created }" pattern="yy-MM-dd HH:mm:ss"/> </span> 
@@ -121,21 +121,20 @@
 			<br>
 			
 			
-			
-			
 			<!-- 文章展示 -->
 				<div style="margin-left: 10px">
-					<!-- 发布文章 -->
-					<c:forEach items="${hotarticles}" var="a">
+					<!-- 热门文章 -->
+					 <c:forEach items="${hotarticles}" var="a">
 						<div class="media">
-							<img alt="" src="/pic/${a.picture }" style="width:190px; height: 124px;">
-							 <div class="media-body" align="center">
-							 	  <h1><a style="color:black" href="select?id=${a.id }" target="blank">${a.title }</a></h1>&nbsp;&nbsp;&nbsp;&nbsp;
+							<img alt="" src="/pic/${a.picture }" class="mr-3"  style="width:190px; height: 124px;">
+							 <div class="media-body">
+							 	  <h1 class="mt-0"><a style="color:black" href="select?id=${a.id }" target="blank">${a.title }</a></h1>&nbsp;&nbsp;&nbsp;&nbsp;
 							 	  <span style="color:gray;font-size: 15px">作者:${a.user.username } &nbsp;&nbsp; ${a.hits }条评论  &nbsp;&nbsp;&nbsp; <fmt:formatDate value="${a.created }" pattern="yy-MM-dd HH:mm:ss"/> </span> 
 							 </div>
 						</div>
 						 <hr>
-					</c:forEach>
+					</c:forEach> 
+					
 					<div>
 						${pages }
 					</div>
@@ -147,7 +146,7 @@
 			<!-- 24小时热门.最新文章 -->
 			
 			<div class="col-md-3 split min_h_500">
-				<div class="card" style="width: 18rem;">
+				<div class="card" style="width: 20rem;">
 					<div class="card-header" style="background-color: light gray;"><b style="font-size: 15px;">24小时热门</b></div>
 					<div class="card-body" style="background-color:#f8f9fa;">
 					<c:forEach items="${article24 }" var="a" varStatus="count">
@@ -167,7 +166,7 @@
 					
 					<!-- 最新文章 -->
 					<br>
-					<div class="card" style="width: 18rem;">
+					<div class="card" style="width: 20rem;">
 					<div class="card-header" style="background-color: light gray;"><b style="font-size: 15px;">最新文章</b></div>
 					<div class="card-body" style="background-color:#f8f9fa;">
 					<c:forEach items="${articleNew }" var="a" varStatus="count">
@@ -177,18 +176,54 @@
 								    	<h5 class="mt-0" style="font-size: 12px;"><a style="color:black" href="select?id=${a.id }" target="blank">${a.title }</a></h5>
 									</div>
 								</div>
-								<c:if test="${count.count<article24.size() }">
+								<c:if test="${count.count<articleNew.size() }">
+									<hr>
+								</c:if>
+					 </c:forEach>	
+					 </div>
+					</div>
+					<br>
+					
+					
+					<!-- 图片集 -->
+					<div class="card" style="width: 20rem;">
+					<div class="card-header" style="background-color: light gray;"><b style="font-size: 15px;">图片集</b></div>
+					<div class="card-body" style="background-color:#f8f9fa;">
+					<c:forEach items="${contentpics }" var="a" varStatus="count">
+					    		<div class="media">
+								    <img src="/pic/${a.picture }" class="mr-3" alt="..." style="width: 50px;height: 50px;">
+								    <div class="media-body">
+								    	<h5 class="mt-0" style="font-size: 12px;"><a style="color:black" href="selectpic?id=${a.id }" target="blank">${a.title }</a></h5>
+									</div>
+								</div>
+								<c:if test="${count.count<contentpics.size() }">
 									<hr>
 								</c:if>
 					 </c:forEach>	
 					 </div>
 					</div>
 					
+					<br>
+					
+					
+					<!-- 文章专题 -->
+					<div class="card" style="width: 20rem;">
+					<div class="card-header" style="background-color: light gray;"><b style="font-size: 15px;">专题</b></div>
+					<div class="card-body" style="background-color:#f8f9fa;">
+					<c:forEach items="${specials }" var="s" varStatus="count">
+						<span style="color:red;font-size: 18px;"><strong>${s.title }</strong></span>
+						<br>
+						<span style="font-size: 10px;">${s.abstracts }</span>
+						
+						<c:forEach items="${s.articles }" var="a" varStatus="count">
+							<h5 class="mt-0" style="font-size: 12px;"><a href="select?id=${a.id }" target="blank"><span style="color: black;">${count.count}.</span>${a.title }</a></h5>
+						</c:forEach>
+					 </c:forEach>
+					 </div>
+					</div>
+					
 					
 			</div>
-			
-			
-			
 			
 			
 		</div>

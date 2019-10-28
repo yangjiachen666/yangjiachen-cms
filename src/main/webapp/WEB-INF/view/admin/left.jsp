@@ -14,7 +14,9 @@ a{text-align: center;}
 	<li class="nav-item"><a class="nav-link"  href="javascript:void(0)" data="/admin/articles">
 			<i class="fas fa-fw fa-folder"></i> <span>文章管理</span>
 	</a></li>
-
+	<li class="nav-item"><a class="nav-link" href="javascript:void(0)" data="/admin/specials">
+			<i class="fas fa-fw fa-chart-area"></i> <span>文章专题</span>
+	</a></li>
 	<li class="nav-item"><a class="nav-link" href="javascript:void(0)" data="/admin/selects">
 			<i class="fas fa-fw fa-chart-area"></i> <span>用户管理</span>
 	</a></li>

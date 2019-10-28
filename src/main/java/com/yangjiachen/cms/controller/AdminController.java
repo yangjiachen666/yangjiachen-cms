@@ -10,6 +10,9 @@
  */
 package com.yangjiachen.cms.controller;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Controller;
@@ -23,8 +26,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.github.pagehelper.PageInfo;
 import com.yangjiachen.cms.domain.Article;
 import com.yangjiachen.cms.domain.ArticleWithBLOBs;
+import com.yangjiachen.cms.domain.Special;
+import com.yangjiachen.cms.domain.SpecialArticle;
 import com.yangjiachen.cms.domain.User;
 import com.yangjiachen.cms.service.ArticleService;
+import com.yangjiachen.cms.service.SpecialService;
 import com.yangjiachen.cms.service.UserService;
 import com.yangjiachen.cms.util.PageUtil;
 
@@ -43,6 +49,9 @@ public class AdminController {
 	
 	@Resource
 	private ArticleService articleService;
+	
+	@Resource
+	private SpecialService specialService;
 	
 	/**
 	 * 
@@ -80,6 +89,103 @@ public class AdminController {
 		return "admin/articles";
 	}
 	
+	/**
+	 * 
+	 * @Title: specials 
+	 * @Description: 文章专题
+	 * @param model
+	 * @return
+	 * @return: String
+	 */
+	@GetMapping("specials")
+	public String specials(Model model) {
+		List<Special> specials = specialService.selects();
+		model.addAttribute("specials", specials);
+		return "/admin/specials";
+	}
+	/**
+	 * 
+	 * @Title: addSpecial 
+	 * @Description: 去添加专题页面
+	 * @return
+	 * @return: String
+	 */
+	@GetMapping("addSpecial")
+	public String addSpecial() {
+		return "/admin/addspecial";
+	}
+	/**
+	 * 
+	 * @Title: addSpecial 
+	 * @Description:完成添加专题请求
+	 * @param special
+	 * @return
+	 * @return: boolean
+	 */
+	@ResponseBody
+	@PostMapping("addspecial")
+	public boolean addSpecial(Special special) {
+		special.setCreated(new Date());
+		int i = specialService.addSpecial(special);
+		return i>0;
+	}
+	/**
+	 * 
+	 * @Title: updateSpecial 
+	 * @Description: 去修改专题页面
+	 * @param model
+	 * @param sid
+	 * @return
+	 * @return: String
+	 */
+	@GetMapping("updateSpecial")
+	public String updateSpecial(Model model,Integer sid) {
+		Special special = specialService.selectSpecialBySid(sid);
+		model.addAttribute("special", special);
+		return "admin/updatespecial";
+	}
+	/**
+	 * 
+	 * @Title: updateSpecial 
+	 * @Description: 完成修改专题
+	 * @param special
+	 * @return
+	 * @return: boolean
+	 */
+	@ResponseBody
+	@PostMapping("updatespecial")
+	public boolean updateSpecial(Special special) {
+		return specialService.updatespecial(special)>0;
+	}
+	
+	/**
+	 * 
+	 * @Title: addArticle 
+	 * @Description: 去增加文章
+	 * @param sid
+	 * @return
+	 * @return: String
+	 */
+	@GetMapping("addArticle")
+	public String addArticle(Model model,Integer sid) {
+		Special special = specialService.selectSpecialBySid(sid);
+		model.addAttribute("special", special);
+		return "admin/specialdetail";
+	}
+	/**
+	 * 
+	 * @Title: addArticle 
+	 * @Description: 完成文章专栏内添加文章
+	 * @param specialArticle
+	 * @return
+	 * @return: boolean
+	 */
+	@ResponseBody
+	@PostMapping("addArticle")
+	public boolean addArticle(SpecialArticle specialArticle) {
+		int i = specialService.addArticle(specialArticle);
+		return i>0;
+	}
 	
 	/**
 	 * 
@@ -150,7 +256,14 @@ public class AdminController {
 		model.addAttribute("page", page);
 		return "/admin/article";
 	}
-	
+	/**
+	 * 
+	 * @Title: updateArticle 
+	 * @Description: 完成审核文章是否通过或者驳回
+	 * @param article
+	 * @return
+	 * @return: Object
+	 */
 	@ResponseBody
 	@PostMapping("updateArticle")
 	public Object updateArticle(ArticleWithBLOBs article) {

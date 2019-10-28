@@ -12,6 +12,7 @@ package com.yangjiachen.cms.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.PageInfo;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import com.yangjiachen.cms.domain.Article;
 import com.yangjiachen.cms.domain.ArticleWithBLOBs;
 import com.yangjiachen.cms.domain.Category;
@@ -38,7 +41,9 @@ import com.yangjiachen.cms.domain.User;
 import com.yangjiachen.cms.service.ArticleService;
 import com.yangjiachen.cms.service.CategoryService;
 import com.yangjiachen.cms.service.ChannelService;
+import com.yangjiachen.cms.util.ArticleEnum;
 import com.yangjiachen.cms.util.PageUtil;
+import com.yangjiachen.cms.vo.ArticleVO;
 
 /** 
  * @ClassName: MyController 
@@ -67,6 +72,8 @@ public class MyController {
 	public String myIndex() {
 		return "/my/index";
 	}
+	
+	
 	/**
 	 * 
 	 * @Title: publish 
@@ -78,6 +85,72 @@ public class MyController {
 	public String publish() {
 		return "/my/publish";
 	}
+	/**
+	 * 
+	 * @Title: publicPic 
+	 * @Description: 去发布图片集页面
+	 * @return
+	 * @return: String
+	 */
+	@GetMapping("publishPic")
+	public String publicPic() {
+		return "/my/publicPic";
+	}
+	/**
+	 * 
+	 * @Title: publicPic 
+	 * @Description: 完成发布图片集
+	 * @return
+	 * @return: boolean
+	 */
+	@ResponseBody
+	@PostMapping("publishPic")
+	public boolean publicPic(HttpServletRequest request,String [] descripts,MultipartFile[] files,ArticleWithBLOBs article) {
+		
+		List<ArticleVO> list = new ArrayList<ArticleVO>();
+		if(files.length>0) {
+			int i =0;
+			for (MultipartFile file : files) {
+				if(!file.isEmpty()) {
+					String path="d:/pic/";
+					String oldFilename = file.getOriginalFilename();
+					String newFilename = UUID.randomUUID()+oldFilename.substring(oldFilename.lastIndexOf("."));
+					try {
+						file.transferTo(new File(path+newFilename));
+						ArticleVO vo = new ArticleVO();
+						vo.setUrl(newFilename);
+						vo.setDescipt(descripts[i++]);
+						article.setPicture(newFilename);
+						list.add(vo);
+					} catch (IllegalStateException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+			 		}
+				}
+			}
+		}
+		HttpSession session = request.getSession(false);
+		if(session==null) 
+			return false;
+		User user = (User) session.getAttribute("user");
+		article.setUserId(user.getId());
+		article.setCreated(new Date());
+		article.setUpdated(new Date());
+		Gson gson = new Gson();
+		String json = gson.toJson(list);
+		article.setContent(json);
+		article.setStatus(0);
+		article.setContentType(ArticleEnum.IMAGE.getCode());
+		article.setDeleted(0);
+		article.setHits(0);
+		article.setHot(0);
+		int i = articleService.insertSelective(article);
+		return i>0;
+	}
+	
 	/**
 	 * 
 	 * @Title: selectsChannel 
@@ -141,6 +214,7 @@ public class MyController {
 		article.setCreated(new Date());
 		article.setUpdated(new Date());
 		article.setHot(0);
+		article.setContentType(ArticleEnum.HTML.getCode());
 		article.setStatus(0);
 		article.setDeleted(0);
 		article.setHits(0);
@@ -174,9 +248,12 @@ public class MyController {
 		if(article.getTitle()==null) {
 			article.setTitle("");
 		}
+		if(article.getTerms()==null) {
+			article.setTerms("");
+		}
 		PageInfo<Article> info = articleService.selects(article, page, pageSize);
 
-		String pages = PageUtil.page(page, info.getPages(),"/my/selectsByUser?status="+article.getStatus()+"&title="+article.getTitle(), pageSize);
+		String pages = PageUtil.page(page, info.getPages(),"/my/selectsByUser?status="+article.getStatus()+"&title="+article.getTitle()+"&terms="+article.getTerms(), pageSize);
 		model.addAttribute("articles", info.getList());
 		model.addAttribute("pages", pages);
 		model.addAttribute("article", article);

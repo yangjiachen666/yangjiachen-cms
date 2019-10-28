@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yangjiachen.cms.dao.SpecialMapper">
+	<resultMap type="special" id="specialMap">
+		<id column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="abstracts" property="abstracts"/>
+		<result column="created" property="created"/>
+		<result column="count" property="count"/>
+		<collection property="articles" ofType="article">
+			<id column="id1" property="id"/>
+			<result column="created1" property="created" jdbcType="TIMESTAMP" />
+			<result column="title1" property="title" jdbcType="VARCHAR" />
+		</collection>
+	</resultMap>
+	
+	<select id="selects" resultMap="specialMap">
+		select a.*,(select count(b.aid) from cms_special_article b where a.id=b.sid ) count,
+		c.id id1,c.title title1 from cms_special a
+		left join cms_special_article b on a.id=b.sid 
+		left join cms_article c on c.id=b.aid 
+	</select>
+	
+	<insert id="addSpecial">
+		insert into cms_special(title,abstracts,created) values(#{title},#{abstracts},#{created})
+	</insert>
+	
+	<select id="selectSpecialBySid" resultMap="specialMap">
+		select a.*,c.id id1,c.title title1,c.created created1 from cms_special
+		a left join cms_special_article b on a.id=b.sid 
+		left join cms_article c on c.id=b.aid 
+		where a.id=#{sid}
+	</select>
+	
+	<update id="updatespecial">
+		update cms_special set title=#{title},abstracts=#{abstracts} where id=#{id}
+	</update>
+	
+	<insert id="addArticle">
+		insert into cms_special_article(sid,aid) values(#{sid},#{aid})
+	</insert>
+</mapper>

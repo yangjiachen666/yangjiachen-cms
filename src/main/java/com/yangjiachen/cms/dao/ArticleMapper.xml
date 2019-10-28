@@ -14,6 +14,8 @@
     <result column="deleted" property="deleted" jdbcType="INTEGER" />
     <result column="created" property="created" jdbcType="TIMESTAMP" />
     <result column="updated" property="updated" jdbcType="TIMESTAMP" />
+    <result column="content_type" property="contentType" jdbcType="TIMESTAMP" />
+    <result column="terms" property="terms" jdbcType="VARCHAR" />
     <association property="user" javaType="user" select="com.yangjiachen.cms.dao.UserMapper.selectByPrimaryKey" column="user_id"></association>
     <association property="channel" javaType="channel" select="com.yangjiachen.cms.dao.ChannelMapper.selectByPrimaryKey" column="channel_id"></association>
     <association property="category" javaType="category" select="com.yangjiachen.cms.dao.CategoryMapper.selectByPrimaryKey" column="category_id"></association>
@@ -31,46 +33,51 @@
   </sql>
   
   <select id="selects" resultMap="BaseResultMap">
-  	    select * from cms_article
+  	 	select a.*,GROUP_CONCAT(c.unique_name) terms from cms_article a left join cms_article_term b 
+  	 	on a.id=b.aid left join cms_term c on b.tid=c.id
   	    <where>
   	    	<!-- 标题 -->
   	    	<if test="title!=null and title!=''">
-  	    		and title like "%"#{title}"%"
+  	    		and a.title like "%"#{title}"%"
   	    	</if>
   	    	<!-- 作者名字 -->
   	    	<if test="userId!=null and userId!=0">
-  	    		and user_Id=#{userId}
+  	    		and a.user_Id=#{userId}
   	    	</if>
   	    	<!-- 栏目 -->
   	    	<if test="channelId!=null and channelId!=0">
-  	    		and channel_Id=#{channelId}
+  	    		and a.channel_Id=#{channelId}
   	    	</if>
   	    	<if test="categoryId!=null and categoryId!=0">
-  	    		and category_Id=#{categoryId}
+  	    		and a.category_Id=#{categoryId}
   	    	</if>
   	    	<if test="status!=null">
-  	    		and status=#{status}
+  	    		and a.status=#{status}
   	    	</if>
   	    	<if test="hot!=null">
-  	    		and hot=#{hot}
+  	    		and a.hot=#{hot}
   	    	</if>
   	    	<if test="deleted!=null">
-  	    		and deleted=#{deleted}
+  	    		and a.deleted=#{deleted}
   	    	</if>
   	    	<if test="created!=null">
-  	    		and created between #{created} and now()
+  	    		and a.created between #{created} and now()
+  	    	</if>
+  	    	<if test="contentType!=null">
+  	    		and a.content_type=#{contentType}
+  	    	</if>
+  	    	<if test="terms!=null and terms!=''">
+  	    		and c.unique_name like "%"#{terms}"%"
   	    	</if>
   	    </where>
-  	    order by created desc
+  	    group by a.id
+  	    order by a.created desc
   </select>
   
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from cms_article
-    where id = #{id,jdbcType=INTEGER}
+    select a.*,GROUP_CONCAT(c.unique_name) terms from cms_article a left join cms_article_term b 
+  	on a.id=b.aid left join cms_term c on b.tid=c.id  group by a.id
+    having a.id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from cms_article
@@ -88,7 +95,8 @@
       #{deleted,jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP}, #{updated,jdbcType=TIMESTAMP}, 
       #{content,jdbcType=LONGVARCHAR}, #{summary,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.yangjiachen.cms.domain.ArticleWithBLOBs" >
+   																					<!-- “keyProperty”表示返回的id要保存到对象的那个属性中 -->
+  <insert id="insertSelective" parameterType="com.yangjiachen.cms.domain.ArticleWithBLOBs" useGeneratedKeys="true" keyProperty="id">
     insert into cms_article
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -133,6 +141,9 @@
       <if test="summary != null" >
         summary,
       </if>
+       <if test="contentType!= null" >
+        content_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -176,6 +187,9 @@
       </if>
       <if test="summary != null" >
         #{summary,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="contentType!= null" >
+         #{contentType,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>

@@ -2,6 +2,7 @@ package com.yangjiachen.cms.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class Article implements Serializable{
     /**
@@ -41,7 +42,27 @@ public class Article implements Serializable{
 
     private Date updated;
 
-    public Integer getId() {
+    private Integer contentType;
+    
+    private String terms;
+
+	public String getTerms() {
+		return terms;
+	}
+
+	public void setTerms(String terms) {
+		this.terms = terms;
+	}
+
+	public Integer getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(Integer contentType) {
+		this.contentType = contentType;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -177,5 +198,19 @@ public class Article implements Serializable{
 	 */
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	/* (non Javadoc) 
+	 * @Title: toString
+	 * @Description: TODO
+	 * @return 
+	 * @see java.lang.Object#toString() 
+	 */
+	@Override
+	public String toString() {
+		return "Article [id=" + id + ", title=" + title + ", picture=" + picture + ", channelId=" + channelId
+				+ ", channel=" + channel + ", categoryId=" + categoryId + ", category=" + category + ", userId="
+				+ userId + ", user=" + user + ", hits=" + hits + ", hot=" + hot + ", status=" + status + ", deleted="
+				+ deleted + ", created=" + created + ", updated=" + updated + ", contentType=" + contentType + "]";
 	}
 }

@@ -20,8 +20,14 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yangjiachen.cms.dao.ArticleMapper;
 import com.yangjiachen.cms.domain.Article;
+import com.yangjiachen.cms.domain.ArticleTerm;
 import com.yangjiachen.cms.domain.ArticleWithBLOBs;
+import com.yangjiachen.cms.domain.Term;
+import com.yangjiachen.cms.exception.CMSException;
 import com.yangjiachen.cms.service.ArticleService;
+import com.yangjiachen.cms.service.ArticleTermService;
+import com.yangjiachen.cms.service.TermService;
+import com.yangjiachen.common.utils.StringUtil;
 
 /** 
  * @ClassName: ArticleServiceImpl 
@@ -34,6 +40,12 @@ public class ArticleServiceImpl implements ArticleService {
 	
 	@Resource
 	private ArticleMapper articleMapper;
+	
+	@Resource
+	private TermService termService;
+	
+	@Resource
+	private ArticleTermService articleTermService;
 
 	/* (non Javadoc) 
 	 * @Title: articles
@@ -58,8 +70,34 @@ public class ArticleServiceImpl implements ArticleService {
 	 */
 	@Override
 	public int insertSelective(ArticleWithBLOBs record) {
-		// TODO Auto-generated method stub
-		return articleMapper.insertSelective(record);
+		
+		try {
+			articleMapper.insertSelective(record);
+			
+			String terms = record.getTerms();
+			if(StringUtil.hasText(terms)) {
+				String[] split = terms.split(",");
+				for (String string : split) {
+					String name = StringUtil.toUniqueName(string);
+					Term term2 = termService.selectByName(name);
+					if(term2==null) {
+						term2 = new Term();
+						term2.setUniqueName(StringUtil.toUniqueName(name));
+						termService.insert(term2);
+					}
+					ArticleTerm term = new ArticleTerm();
+					term.setAid(record.getId());
+					term.setTid(term2.getId());
+					articleTermService.insert(term);
+				}
+			}
+			return 1;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw new CMSException("添加失败了");
+		}
+		
 	}
 
 	/* (non Javadoc) 
