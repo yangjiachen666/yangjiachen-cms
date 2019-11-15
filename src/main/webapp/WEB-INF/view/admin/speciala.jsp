@@ -18,42 +18,32 @@
 <script type="text/javascript" src="/resource/js/cms.js"></script>
 </head>
 <body>
+	
 <div class="container">
-	<h1 align="center">专题编辑</h1>
+	<h1 align="center">专题管理</h1>
 	<button class="btn btn-outline-dark" onclick="addSpecial()">添加专题</button>
-	<br>
-	<div align="center">
 	<table class="table table-striped table-bordered">
-		<tr>
+		<tr align="center" valign="middle">
 			<td>专题标题</td>
 			<td>专题文章</td>
 			<td>操作</td>
 		</tr>
-		<c:forEach items="${specials }" var="s">
-			<tr>
+		<c:forEach items="${speciala }" var="s" varStatus="index">
+			<tr align="center" valign="middle">
 				<td>${s.title }</td>
 				<td>${s.count }篇</td>
 				<td>
-					<button class="btn btn-outline-info" onclick="addArticle(${s.id})">追加文章</button>&nbsp;&nbsp;
-					<button class="btn btn-outline-dark" onclick="updatespecial(${s.id})">修改专题</button>
+					<a href="/admin/addArticle?sid=${s.id }">追加文章</a>
+					<a href="/admin/update?sid=${s.id }">修改专题</a>
 				</td>
 			</tr>
 		</c:forEach>
 	</table>
 	</div>
-	
-</div>
 <script type="text/javascript">
 	function addSpecial(){
-		$("#content-wrapper").load("/admin/addSpecial");
+		$("#content-wrapper").load("/admin/addSpeciala");
 	}
-	function updatespecial(sid){
-		$("#content-wrapper").load("/admin/updateSpecial?sid="+sid);
-	}
-	function addArticle(sid){
-		$("#content-wrapper").load("/admin/addArticle?sid="+sid);
-	}
-	
 </script>
 </body>
 </html>

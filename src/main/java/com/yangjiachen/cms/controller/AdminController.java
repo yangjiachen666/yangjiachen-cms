@@ -26,10 +26,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.github.pagehelper.PageInfo;
 import com.yangjiachen.cms.domain.Article;
 import com.yangjiachen.cms.domain.ArticleWithBLOBs;
+import com.yangjiachen.cms.domain.Friendly;
 import com.yangjiachen.cms.domain.Special;
 import com.yangjiachen.cms.domain.SpecialArticle;
+import com.yangjiachen.cms.domain.Speciala;
 import com.yangjiachen.cms.domain.User;
+import com.yangjiachen.cms.exception.CMSException;
 import com.yangjiachen.cms.service.ArticleService;
+import com.yangjiachen.cms.service.FriendlyService;
 import com.yangjiachen.cms.service.SpecialService;
 import com.yangjiachen.cms.service.UserService;
 import com.yangjiachen.cms.util.PageUtil;
@@ -46,12 +50,12 @@ public class AdminController {
 	
 	@Resource
 	private UserService userService;
-	
 	@Resource
 	private ArticleService articleService;
-	
 	@Resource
 	private SpecialService specialService;
+	@Resource
+	private FriendlyService friendlyService;
 	
 	/**
 	 * 
@@ -158,6 +162,7 @@ public class AdminController {
 		return specialService.updatespecial(special)>0;
 	}
 	
+	
 	/**
 	 * 
 	 * @Title: addArticle 
@@ -182,9 +187,17 @@ public class AdminController {
 	 */
 	@ResponseBody
 	@PostMapping("addArticle")
-	public boolean addArticle(SpecialArticle specialArticle) {
-		int i = specialService.addArticle(specialArticle);
-		return i>0;
+	public boolean addArticle(Model model,SpecialArticle specialArticle) {
+		try {
+			int i = specialService.addArticle(specialArticle);
+			return i>0;
+		} catch (CMSException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			String message = e.getMessage();
+			model.addAttribute("error", message);
+			return false;
+		}
 	}
 	
 	/**
@@ -267,6 +280,46 @@ public class AdminController {
 	@ResponseBody
 	@PostMapping("updateArticle")
 	public Object updateArticle(ArticleWithBLOBs article) {
+		if(article.getStatus()==1) {
+			
+		}
 		return articleService.updateByPrimaryKeySelective(article)>0;
+	}
+	/**
+	 * 
+	 * @Title: linkSelect 
+	 * @Description: 友情连接页面
+	 * @param model
+	 * @param page
+	 * @param pageSize
+	 * @return
+	 * @return: String
+	 */
+	@GetMapping("/links/selects")
+	public String linkSelect(Model model,@RequestParam(defaultValue = "1")Integer page,@RequestParam(defaultValue = "3")Integer pageSize) {
+		PageInfo<Friendly> info = friendlyService.selects(page, pageSize);
+		String pages = PageUtil.page(page, info.getPages(), "/admin/links/selects", pageSize);
+		model.addAttribute("friendlys", info.getList());
+		model.addAttribute("pages", pages);
+		return "/admin/links";
+	}
+	/**
+	 * 
+	 * @Title: addlinks 
+	 * @Description: 去添加友情连接页面
+	 * @return
+	 * @return: String
+	 */
+	@GetMapping("addlinks")
+	public String addlinks() {
+		return "/admin/addlink";
+	}
+	
+	@ResponseBody
+	@PostMapping("addlink")
+	public boolean addlink(Friendly friendly,String url1) {
+		friendly.setCreated(new Date());
+		friendly.setUrl(url1);
+		return friendlyService.insert(friendly)>0;
 	}
 }

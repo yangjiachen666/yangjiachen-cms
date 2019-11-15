@@ -4,9 +4,7 @@
   <artifactId>yangjiachen-cms</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
-  
-  <!-- 定义主要版本号 -->
-	<properties>
+  <properties>
 		<spring.version>5.1.5.RELEASE</spring.version>
 		<mybatis.version>3.4.2</mybatis.version>
 		<log4j.version>1.2.17</log4j.version>
@@ -34,8 +32,58 @@
 
 	<!-- jar依赖 -->
 	<dependencies>
-		<!--配置依赖工具类  -->
-		
+		<!-- 引入自定义工具类 -->
+
+		<!-- kafka配置 -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+			<version>2.2.0.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka_2.10</artifactId>
+			<version>0.8.2.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jmxri</artifactId>
+					<groupId>com.sun.jmx</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jms</artifactId>
+					<groupId>javax.jms</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jmxtools</artifactId>
+					<groupId>com.sun.jdmk</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.7</version>
+		</dependency>
+		<!-- redis依赖 -->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+			<version>1.8.7.RELEASE</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
 		<!-- spring 及springMVC -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -231,6 +279,8 @@
 	</dependencies>
 
 
+
+
 	<!-- 构建项目 -->
 	<build>
 		<plugins>
@@ -254,27 +304,32 @@
 				<version>9.3.7.v20160115</version>
 				<configuration>
 					<httpConnector>
-					    <!--  项目端口号 -->
+						<!-- 项目端口号 -->
 						<port>80</port>
-						 <!--项目路径 -->
+						<!--项目路径 -->
 						<host>localhost</host>
 					</httpConnector>
-					<!-- 配置虚拟访问路径
-				 -->
-				 <contextHandlers>
-				   <jettyWebAppContext>
-				   <!-- 虚拟路径 -->
-				    <contextPath>/pic/</contextPath>
-				   
-				     <!-- 物理路径 -->
-				     <resourceBase>D:/pic/</resourceBase>
-				   
-				   </jettyWebAppContext>
-				 
-				 </contextHandlers>
-				 <scanIntervalSeconds>1</scanIntervalSeconds>
+					<!-- 配置虚拟访问路径 -->
+					<contextHandlers>
+						<jettyWebAppContext>
+							<!-- 虚拟路径 -->
+							<contextPath>/pic/</contextPath>
+
+							<!-- 物理路径 -->
+							<resourceBase>D:/pic/</resourceBase>
+
+
+
+						</jettyWebAppContext>
+
+					</contextHandlers>
+
+					<scanIntervalSeconds>1</scanIntervalSeconds>
 				</configuration>
+
 			</plugin>
+
 		</plugins>
+
 	</build>
 </project>

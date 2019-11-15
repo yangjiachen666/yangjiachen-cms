@@ -16,6 +16,8 @@
     <result column="updated" property="updated" jdbcType="TIMESTAMP" />
     <result column="content_type" property="contentType" jdbcType="TIMESTAMP" />
     <result column="terms" property="terms" jdbcType="VARCHAR" />
+    <result column="keywords" property="keywords" jdbcType="VARCHAR" />
+    <result column="original" property="original" jdbcType="VARCHAR" />
     <association property="user" javaType="user" select="com.yangjiachen.cms.dao.UserMapper.selectByPrimaryKey" column="user_id"></association>
     <association property="channel" javaType="channel" select="com.yangjiachen.cms.dao.ChannelMapper.selectByPrimaryKey" column="channel_id"></association>
     <association property="category" javaType="category" select="com.yangjiachen.cms.dao.CategoryMapper.selectByPrimaryKey" column="category_id"></association>
@@ -26,7 +28,7 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, title, picture, channel_id, category_id, user_id, hits, hot, status, deleted, 
-    created, updated
+    created, updated, keywords,original
   </sql>
   <sql id="Blob_Column_List" >
     content, summary
@@ -144,6 +146,12 @@
        <if test="contentType!= null" >
         content_type,
       </if>
+      <if test="keywords!= null and keywords!=''" >
+        keywords,
+      </if>
+      <if test="original!= null and original!=''" >
+        original,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -190,6 +198,12 @@
       </if>
        <if test="contentType!= null" >
          #{contentType,jdbcType=INTEGER},
+      </if>
+       <if test="keywords!= null and keywords!=''" >
+         #{keywords,jdbcType=INTEGER},
+      </if>
+      <if test="original!= null and original!=''" >
+         #{original,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>

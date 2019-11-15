@@ -1,26 +1,25 @@
 /**   
  * Copyright © 2019 北京八维. All rights reserved.
  * 
- * @Title: Special.java 
+ * @Title: Speciala.java 
  * @Prject: yangjiachen-cms
  * @Package: com.yangjiachen.cms.domain 
  * @Description: TODO
  * @author: 杨家琛  
- * @date: 2019年10月25日 下午2:26:36 
+ * @date: 2019年10月30日 上午8:51:11 
  */
 package com.yangjiachen.cms.domain;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /** 
- * @ClassName: Special 
+ * @ClassName: Speciala 
  * @Description: TODO
  * @author:杨家琛
- * @date: 2019年10月25日 下午2:26:36  
+ * @date: 2019年10月30日 上午8:51:11  
  */
-public class Special implements Serializable{
+public class Speciala implements Serializable{
 	/**
 	 * @fieldName: serialVersionUID
 	 * @fieldType: long
@@ -33,19 +32,6 @@ public class Special implements Serializable{
 	private String abstracts;
 	private Date created;
 	private Integer count;
-	private List<Article> articles;
-	/**
-	 * @return the articles
-	 */
-	public List<Article> getArticles() {
-		return articles;
-	}
-	/**
-	 * @param articles the articles to set
-	 */
-	public void setArticles(List<Article> articles) {
-		this.articles = articles;
-	}
 	/**
 	 * @return the count
 	 */
@@ -117,8 +103,6 @@ public class Special implements Serializable{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((abstracts == null) ? 0 : abstracts.hashCode());
-		result = prime * result + ((articles == null) ? 0 : articles.hashCode());
-		result = prime * result + ((count == null) ? 0 : count.hashCode());
 		result = prime * result + ((created == null) ? 0 : created.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
@@ -126,7 +110,7 @@ public class Special implements Serializable{
 	}
 	/* (non Javadoc) 
 	 * @Title: equals
-	 * @Description: 重写equals和hashcode方法
+	 * @Description: TODO
 	 * @param obj
 	 * @return 
 	 * @see java.lang.Object#equals(java.lang.Object) 
@@ -139,21 +123,11 @@ public class Special implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Special other = (Special) obj;
+		Speciala other = (Speciala) obj;
 		if (abstracts == null) {
 			if (other.abstracts != null)
 				return false;
 		} else if (!abstracts.equals(other.abstracts))
-			return false;
-		if (articles == null) {
-			if (other.articles != null)
-				return false;
-		} else if (!articles.equals(other.articles))
-			return false;
-		if (count == null) {
-			if (other.count != null)
-				return false;
-		} else if (!count.equals(other.count))
 			return false;
 		if (created == null) {
 			if (other.created != null)
@@ -171,16 +145,5 @@ public class Special implements Serializable{
 		} else if (!title.equals(other.title))
 			return false;
 		return true;
-	}
-	/* (non Javadoc) 
-	 * @Title: toString
-	 * @Description: TODO
-	 * @return 
-	 * @see java.lang.Object#toString() 
-	 */
-	@Override
-	public String toString() {
-		return "Special [id=" + id + ", title=" + title + ", abstracts=" + abstracts + ", created=" + created
-				+ ", count=" + count + ", articles=" + articles + "]";
 	}
 }

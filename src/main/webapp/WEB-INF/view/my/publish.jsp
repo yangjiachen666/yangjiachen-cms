@@ -16,7 +16,6 @@ String htmlData = request.getParameter("content1") != null ? request.getParamete
     <script charset="utf-8" src="/resource/kindeditor/lang/zh-CN.js"></script>
 	<script
 		src="/resource/js/jquery-3.2.1.js"></script>
-
 	<script>
 		KindEditor.ready(function(K) {
 			window.editor1 = K.create('textarea[name="content1"]', {
@@ -41,7 +40,7 @@ String htmlData = request.getParameter("content1") != null ? request.getParamete
 		function query(){
 			alert(editor1.html())
 			//alert( $("[name='content1']").attr("src"))
-		} 
+		}
 	</script>
 </head>
 <body>
@@ -53,6 +52,14 @@ String htmlData = request.getParameter("content1") != null ? request.getParamete
 		<div class="form-group">
 			<label for="terms"><span style="color:blue;font-size: 15px;font-weight: bold">标签</span></label>
 			<input type="text" name="terms" id="terms" class="form-control"/>
+		</div>
+		<div class="form-group">
+			<label for="keywords"><span style="color:blue;font-size: 15px;font-weight: bold">来源</span></label>
+			<textarea rows="10" id="keywords" cols="30" name="keywords" style="width: 825px;"></textarea>
+		</div>
+		<div class="form-group">
+			<label for="original"><span style="color:blue;font-size: 15px;font-weight: bold">关键词</span></label>
+			<textarea rows="10" id="original" cols="30" name="original" style="width: 825px;"></textarea>
 		</div>
 		<div class="form-group">
 			<label for="centent"><span style="color:blue;font-size: 15px;font-weight: bold">文章内容</span></label>

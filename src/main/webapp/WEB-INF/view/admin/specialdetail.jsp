@@ -47,8 +47,8 @@
 		<div class="form-group form-inline">
 			<input type="text" placeholder="文章ID" name="aid" class="form-control"/>
 			<button class="btn btn-outline-dark" onclick="addArticle(${special.id})">添加文章</button>
+			${error }
 		</div>
-		
 	</div>
 </body>
 <script type="text/javascript">
@@ -62,7 +62,7 @@
 				alert("操作成功");
 				$("#content-wrapper").load("/admin/addArticle?sid="+sid);
 			}else{
-				alert("操作失败");
+				alert("没有此文章,或添加失败了,请检查是否有此文章");
 			}
 		})
 	}

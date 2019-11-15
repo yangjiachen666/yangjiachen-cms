@@ -73,7 +73,6 @@ public class ArticleServiceImpl implements ArticleService {
 		
 		try {
 			articleMapper.insertSelective(record);
-			
 			String terms = record.getTerms();
 			if(StringUtil.hasText(terms)) {
 				String[] split = terms.split(",");

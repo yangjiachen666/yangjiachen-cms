@@ -26,7 +26,7 @@ a{text-align: center;}
 	<li class="nav-item"><a class="nav-link" href="javascript:void(0)" data="待开发">
 			<i class="fas fa-fw fa-table"></i> <span>系统设置</span>
 	</a></li>
-	<li class="nav-item"><a class="nav-link" href="javascript:void(0)" data="/links/selects">
+	<li class="nav-item"><a class="nav-link" href="javascript:void(0)" data="/admin/links/selects">
 			<i class="fas fa-fw fa-table"></i> <span>友情链接</span>
 	</a></li>
 </ul>

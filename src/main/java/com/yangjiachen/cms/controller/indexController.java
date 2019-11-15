@@ -11,15 +11,22 @@
 package com.yangjiachen.cms.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageInfo;
 import com.google.gson.Gson;
@@ -30,10 +37,15 @@ import com.yangjiachen.cms.domain.Article;
 import com.yangjiachen.cms.domain.ArticleWithBLOBs;
 import com.yangjiachen.cms.domain.Category;
 import com.yangjiachen.cms.domain.Channel;
+import com.yangjiachen.cms.domain.Comment;
+import com.yangjiachen.cms.domain.Friendly;
 import com.yangjiachen.cms.domain.Special;
+import com.yangjiachen.cms.domain.User;
 import com.yangjiachen.cms.service.ArticleService;
 import com.yangjiachen.cms.service.CategoryService;
 import com.yangjiachen.cms.service.ChannelService;
+import com.yangjiachen.cms.service.CommentService;
+import com.yangjiachen.cms.service.FriendlyService;
 import com.yangjiachen.cms.service.SpecialService;
 import com.yangjiachen.cms.util.ArticleEnum;
 import com.yangjiachen.cms.util.PageUtil;
@@ -57,6 +69,12 @@ public class indexController {
 	private ArticleService articleService;
 	@Resource
 	private SpecialService specialService;
+	@Resource
+	private CommentService commentService;
+	@Resource
+	private FriendlyService friendlyService;
+	@Resource
+	private RedisTemplate redisTemplate;
 
 	/**
 	 * 
@@ -72,7 +90,6 @@ public class indexController {
 	@RequestMapping(value = { "", "index" })
 	public String index(Model model, Article article, @RequestParam(defaultValue = "1") Integer page,
 			@RequestParam(defaultValue = "8") Integer pageSize) {
-		long start = System.currentTimeMillis();
 		// 默认查找已经审核过的
 		article.setStatus(1);
 		article.setDeleted(0);
@@ -80,27 +97,17 @@ public class indexController {
 
 		Thread t1 = null;
 		Thread t2 = null;
-		Thread t3 = null;
 		Thread t4 = null;
 		Thread t5 = null;
 		Thread t6 = null;
 		Thread t7 = null;
-
-		t1 = new Thread(new Runnable() {
- 
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				// 左侧栏目
-				List<Channel> channels = channelService.selects();
-				model.addAttribute("channels", channels);
-				
-			}
-		});
-
+		
 		t2 = new Thread(new Runnable() {
 			@Override
 			public void run() {
+				// 左侧栏目
+				List<Channel> channels = channelService.selects();
+				model.addAttribute("channels", channels);
 				// 栏目不为空查找
 				if (null != article.getChannelId()) {
 					// 通过栏目id获取所有类型
@@ -120,23 +127,27 @@ public class indexController {
 					model.addAttribute("articles", info.getList());
 					model.addAttribute("pages", pages);
 				}
+				
+					if (null == article.getChannelId()) {
+						// 开始访问的时候展示热门文章
+						List<Article> hotarticles = (List<Article>) redisTemplate.opsForValue().get("hotarticles");
+						if(null==hotarticles) {
+							article.setHot(1);
+							PageInfo<Article> info = articleService.selects(article, page, pageSize);
+							String pages = PageUtil.page(page, info.getPages(), "", pageSize);
+							redisTemplate.opsForValue().set("hotarticles", info.getList(),1,TimeUnit.HOURS);
+							System.out.println("mysql查询的------");
+							model.addAttribute("hotarticles", info.getList());
+							model.addAttribute("pages", pages);
+						}else {
+							System.out.println("redis查询的------");
+							model.addAttribute("hotarticles", hotarticles);
+						}
+						
+					} 
 			}
 		});
 
-		t3 = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				if (null == article.getChannelId()) {
-					article.setHot(1);
-					// 开始访问的时候展示热门文章
-					PageInfo<Article> info = articleService.selects(article, page, pageSize);
-					String pages = PageUtil.page(page, info.getPages(),"", pageSize);
-					model.addAttribute("hotarticles", info.getList());
-					model.addAttribute("pages", pages);
-				}   
-			}
-		});
 
 		// 第一次访问channelId是空 所以赋hot 也就是默认查找热门文章
 
@@ -173,9 +184,10 @@ public class indexController {
 
 			@Override
 			public void run() {
-				// 文章标题
+				// 文章专题
 				List<Special> specials = specialService.selects();
 				model.addAttribute("specials", specials);
+				
 			}
 		});
 
@@ -193,10 +205,19 @@ public class indexController {
 				model.addAttribute("article", article);
 			}
 		});
+		t1 = new Thread(new Runnable() {
+			 
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				//友情链接
+				PageInfo<Friendly> info = friendlyService.selects(1,10);
+				model.addAttribute("friendlys",info.getList());
+			}
+		});
 		
 		t1.start();
 		t2.start();
-		t3.start();
 		t4.start();
 		t5.start();
 		t6.start();
@@ -205,7 +226,6 @@ public class indexController {
 		try {
 			t1.join();
 			t2.join();
-			t3.join();
 			t4.join();
 			t5.join();
 			t6.join();
@@ -214,15 +234,10 @@ public class indexController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		
-		long end = System.currentTimeMillis();
-		System.out.println("-------" + (end - start) + "毫秒");
-
 		return "index/index";
-
+		
 	}
-
 	/**
 	 * 
 	 * @Title: select
@@ -233,9 +248,13 @@ public class indexController {
 	 * @return: String
 	 */
 	@GetMapping("select")
-	public String select(Model model, Integer id) {
+	public String select(Model model, Integer id,@RequestParam(defaultValue = "1")Integer page,@RequestParam(defaultValue = "10")Integer pageSize) {
 		ArticleWithBLOBs article = articleService.selectByPrimaryKey(id);
+		PageInfo<Comment> info = commentService.selects(id, page, pageSize);
+		String pages = PageUtil.page(page, info.getPages(), "/select?id="+id , pageSize);
 		model.addAttribute("article", article);
+		model.addAttribute("comments", info.getList());
+		model.addAttribute("pages", pages);
 		return "index/article";
 	}
 
@@ -263,5 +282,26 @@ public class indexController {
 		model.addAttribute("article", article);
 		model.addAttribute("articlepic", list);
 		return "/index/articlepic";
+	}
+	/**
+	 * 
+	 * @Title: addComment 
+	 * @Description: 添加评论
+	 * @param comment
+	 * @param request
+	 * @return
+	 * @return: boolean
+	 */
+	@ResponseBody
+	@PostMapping("addComment")
+	public boolean addComment(Comment comment,HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if(session==null) {
+			return false;
+		}
+		User user = (User) session.getAttribute("user");
+		comment.setCreated(new Date());
+		comment.setUserId(user.getId());
+		return commentService.insert(comment)>0;
 	}
 }

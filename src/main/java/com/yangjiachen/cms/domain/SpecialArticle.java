@@ -43,4 +43,14 @@ public class SpecialArticle {
 	public void setAid(Integer aid) {
 		this.aid = aid;
 	}
+	/* (non Javadoc) 
+	 * @Title: toString
+	 * @Description: TODO
+	 * @return 
+	 * @see java.lang.Object#toString() 
+	 */
+	@Override
+	public String toString() {
+		return "SpecialArticle [sid=" + sid + ", aid=" + aid + "]";
+	}
 }

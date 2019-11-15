@@ -29,4 +29,5 @@ public class ArticleWithBLOBs extends Article implements Serializable{
     public void setSummary(String summary) {
         this.summary = summary == null ? null : summary.trim();
     }
+    
 }

@@ -213,8 +213,7 @@
 					<c:forEach items="${specials }" var="s" varStatus="count">
 						<span style="color:red;font-size: 18px;"><strong>${s.title }</strong></span>
 						<br>
-						<span style="font-size: 10px;">${s.abstracts }</span>
-						
+						<span style="font-size: 10px;color:gray;">${s.abstracts }</span>
 						<c:forEach items="${s.articles }" var="a" varStatus="count">
 							<h5 class="mt-0" style="font-size: 12px;"><a href="select?id=${a.id }" target="blank"><span style="color: black;">${count.count}.</span>${a.title }</a></h5>
 						</c:forEach>
@@ -222,9 +221,22 @@
 					 </div>
 					</div>
 					
+					<br>
+					
+					<!-- 友情链接 -->
+					<div class="card" style="width: 20rem;">
+					<div class="card-header" style="background-color: light gray;"><b style="font-size: 15px;">友情链接</b></div>
+					<div class="card-body" style="background-color:#f8f9fa;">
+					<c:forEach items="${friendlys }" var="f" varStatus="count">
+						<a href="${f.url }" target="blank">${f.text }</a> &nbsp;&nbsp;&nbsp;
+						<c:if test="${count.count%4==0 }">
+							<br><br>
+						</c:if>
+					 </c:forEach>
+					 </div>
+					</div>
 					
 			</div>
-			
 			
 		</div>
 		<div>

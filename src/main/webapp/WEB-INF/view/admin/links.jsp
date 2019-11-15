@@ -19,41 +19,31 @@
 </head>
 <body>
 <div class="container">
-	<h1 align="center">专题编辑</h1>
-	<button class="btn btn-outline-dark" onclick="addSpecial()">添加专题</button>
-	<br>
-	<div align="center">
+	<input type="button" class="btn btn-outline-success" value="点击添加友情连接" onclick="addlink()"/>
 	<table class="table table-striped table-bordered">
-		<tr>
-			<td>专题标题</td>
-			<td>专题文章</td>
-			<td>操作</td>
+		<tr align="center" valign="middle">
+			<td>序号</td>
+			<td>友情连接文本</td>
+			<td>友情连接地址</td>
+			<td>添加日期</td>
 		</tr>
-		<c:forEach items="${specials }" var="s">
-			<tr>
-				<td>${s.title }</td>
-				<td>${s.count }篇</td>
-				<td>
-					<button class="btn btn-outline-info" onclick="addArticle(${s.id})">追加文章</button>&nbsp;&nbsp;
-					<button class="btn btn-outline-dark" onclick="updatespecial(${s.id})">修改专题</button>
-				</td>
+		<c:forEach items="${friendlys }" var="f" varStatus="index">
+			<tr align="center" valign="middle">
+				<td>${index.index+1 }</td>
+				<td>${f.text }</td>
+				<td>${f.url }</td>
+				<td><fmt:formatDate value="${f.created }" pattern="yyyy-MM-dd"/></td>
 			</tr>
 		</c:forEach>
 	</table>
+	<div>
+		${pages }
 	</div>
-	
 </div>
 <script type="text/javascript">
-	function addSpecial(){
-		$("#content-wrapper").load("/admin/addSpecial");
+	function addlink(){
+		$("#content-wrapper").load("/admin/addlinks");		
 	}
-	function updatespecial(sid){
-		$("#content-wrapper").load("/admin/updateSpecial?sid="+sid);
-	}
-	function addArticle(sid){
-		$("#content-wrapper").load("/admin/addArticle?sid="+sid);
-	}
-	
 </script>
 </body>
 </html>

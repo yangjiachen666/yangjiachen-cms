@@ -45,6 +45,26 @@ public class Article implements Serializable{
     private Integer contentType;
     
     private String terms;
+    
+    private String keywords;
+    
+    private String original;
+    
+	public String getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
+	}
+
+	public String getOriginal() {
+		return original;
+	}
+
+	public void setOriginal(String original) {
+		this.original = original;
+	}
 
 	public String getTerms() {
 		return terms;
@@ -158,54 +178,30 @@ public class Article implements Serializable{
         this.updated = updated;
     }
 
-	/**
-	 * @return the channel
-	 */
 	public Channel getChannel() {
 		return channel;
 	}
 
-	/**
-	 * @param channel the channel to set
-	 */
 	public void setChannel(Channel channel) {
 		this.channel = channel;
 	}
 
-	/**
-	 * @return the category
-	 */
 	public Category getCategory() {
 		return category;
 	}
 
-	/**
-	 * @param category the category to set
-	 */
 	public void setCategory(Category category) {
 		this.category = category;
 	}
 
-	/**
-	 * @return the user
-	 */
 	public User getUser() {
 		return user;
 	}
 
-	/**
-	 * @param user the user to set
-	 */
 	public void setUser(User user) {
 		this.user = user;
 	}
 
-	/* (non Javadoc) 
-	 * @Title: toString
-	 * @Description: TODO
-	 * @return 
-	 * @see java.lang.Object#toString() 
-	 */
 	@Override
 	public String toString() {
 		return "Article [id=" + id + ", title=" + title + ", picture=" + picture + ", channelId=" + channelId

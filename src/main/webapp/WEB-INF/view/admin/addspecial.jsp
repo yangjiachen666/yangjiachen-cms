@@ -11,6 +11,9 @@
 <!-- 后台页面样式模板 -->
 <link rel="stylesheet" href="/resource/css/sb-admin.css">
 <link rel="stylesheet" href="/resource/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="/resource/css/jquery/screen.css" />
+<script type="text/javascript" src="/resource/js/jquery-3.2.1.js"></script>
+<script type="text/javascript" src="/resource/js/jquery.validate.js"></script>
 </head>
 <body>
 	<div class="container">
@@ -24,21 +27,36 @@
 			<input type="text" name="abstracts" id="abstracts" style="height: 200px;" class="form-control"/>
 		</div>
 		<div class="form-group">
-		<input type="button" class="btn btn-outline-dark" value="保存" onclick="addspecial()"/>
+		<input type="submit" class="btn btn-outline-dark" value="保存"/>
 		</div>
 	</form>
 	</div>
 </body>
 <script type="text/javascript">
-	function addspecial(){
-		$.post("/admin/addspecial",$("#form1").serialize(),function(flag){
-			if(flag){
-				alert("添加专题成功");
-				$("#content-wrapper").load("/admin/specials");
-			}else{
-				alert("添加专题失败");
+	$(function(){
+		$("#form1").validate({
+			rules:{
+				title:{
+					required:true,
+				}
+			},
+			messages:{
+				title:{
+					required:"专题必须填才能够添加呦",
+				}
+			},
+			submitHandler:function(){
+				$.post("/admin/addspecial",$("#form1").serialize(),function(flag){
+					if(flag){
+						alert("添加专题成功");
+						$("#content-wrapper").load("/admin/specials");
+					}else{
+						alert("添加专题失败");
+					}
+				})
 			}
 		})
-	}
+	})
+
 </script>
 </html>
