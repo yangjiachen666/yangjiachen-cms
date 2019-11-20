@@ -19,6 +19,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +36,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.yangjiachen.cms.dao.ArticleRespositer;
 import com.yangjiachen.cms.domain.Article;
 import com.yangjiachen.cms.domain.ArticleWithBLOBs;
 import com.yangjiachen.cms.domain.Category;
@@ -48,6 +52,7 @@ import com.yangjiachen.cms.service.CommentService;
 import com.yangjiachen.cms.service.FriendlyService;
 import com.yangjiachen.cms.service.SpecialService;
 import com.yangjiachen.cms.util.ArticleEnum;
+import com.yangjiachen.cms.util.ESUtils;
 import com.yangjiachen.cms.util.PageUtil;
 import com.yangjiachen.cms.vo.ArticleVO;
 import com.yangjiachen.common.utils.DateUtil;
@@ -75,7 +80,33 @@ public class indexController {
 	private FriendlyService friendlyService;
 	@Resource
 	private RedisTemplate redisTemplate;
-
+	@Autowired
+	private ArticleRespositer articleRespositer;
+	@Autowired
+	private ElasticsearchTemplate elasticsearchTemplate;
+	/**
+	 * 
+	 * @Title: search 
+	 * @Description: 分词查询
+	 * @param key
+	 * @param model
+	 * @return
+	 * @return: String
+	 */
+	@RequestMapping("search")
+	public String search(String key,Model model,@RequestParam(defaultValue = "1")Integer page,@RequestParam(defaultValue = "3")Integer pageSize) {
+		long start = System.currentTimeMillis();
+		AggregatedPage<?> selectObjects = ESUtils.selectObjects(elasticsearchTemplate, Article.class, page, pageSize, new String[] {"title"}, key);
+		List<?> list = selectObjects.getContent();
+		long end = System.currentTimeMillis();
+		String pages = PageUtil.page(page,(int)Math.ceil((float)selectObjects.getTotalElements()/(float)pageSize), "/search?key="+key, pageSize);
+		System.out.println("------------"+(end-start));
+		model.addAttribute("hotarticles", list);
+		model.addAttribute("key", key);
+		model.addAttribute("pages", pages);
+		return "index/index";
+	}
+	
 	/**
 	 * 
 	 * @Title: index
@@ -115,7 +146,7 @@ public class indexController {
 					model.addAttribute("categorys", categorys);
 					// 通过栏目和类型获取文章
 					// 前台是动态sql所以不需要判断categoryid是否为空
-					PageInfo<Article> info = articleService.selects(article, page, pageSize);
+					PageInfo<ArticleWithBLOBs> info = articleService.selects(article, page, pageSize);
 					// 展示全部的时候因为categoryId是null 所以400请求,这样解决
 					String params = "?channelId=" + article.getChannelId();
 					if (null != article.getCategoryId()) {
@@ -133,7 +164,7 @@ public class indexController {
 						List<Article> hotarticles = (List<Article>) redisTemplate.opsForValue().get("hotarticles");
 						if(null==hotarticles) {
 							article.setHot(1);
-							PageInfo<Article> info = articleService.selects(article, page, pageSize);
+							PageInfo<ArticleWithBLOBs> info = articleService.selects(article, page, pageSize);
 							String pages = PageUtil.page(page, info.getPages(), "", pageSize);
 							redisTemplate.opsForValue().set("hotarticles", info.getList(),1,TimeUnit.HOURS);
 							System.out.println("mysql查询的------");
@@ -162,7 +193,7 @@ public class indexController {
 				article2.setContentType(ArticleEnum.HTML.getCode());
 				article2.setCreated(DateUtil.getDateByBefore());
 				article2.setStatus(1);
-				PageInfo<Article> info = articleService.selects(article2, 1, 4);
+				PageInfo<ArticleWithBLOBs> info = articleService.selects(article2, 1, 4);
 				model.addAttribute("article24", info.getList());
 			}
 		});
@@ -175,7 +206,7 @@ public class indexController {
 				article3.setDeleted(0);
 				article3.setStatus(1);
 				article3.setContentType(ArticleEnum.HTML.getCode());
-				PageInfo<Article> info1 = articleService.selects(article3, 1, 5);
+				PageInfo<ArticleWithBLOBs> info1 = articleService.selects(article3, 1, 5);
 				model.addAttribute("articleNew", info1.getList());
 			}
 		});
@@ -200,7 +231,7 @@ public class indexController {
 				article4.setStatus(1);
 				article4.setDeleted(0);
 				article4.setContentType(ArticleEnum.IMAGE.getCode());
-				PageInfo<Article> info2 = articleService.selects(article4, 1, 10);
+				PageInfo<ArticleWithBLOBs> info2 = articleService.selects(article4, 1, 10);
 				model.addAttribute("contentpics", info2.getList());
 				model.addAttribute("article", article);
 			}

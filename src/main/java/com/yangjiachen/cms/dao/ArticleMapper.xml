@@ -19,8 +19,6 @@
     <result column="keywords" property="keywords" jdbcType="VARCHAR" />
     <result column="original" property="original" jdbcType="VARCHAR" />
     <association property="user" javaType="user" select="com.yangjiachen.cms.dao.UserMapper.selectByPrimaryKey" column="user_id"></association>
-    <association property="channel" javaType="channel" select="com.yangjiachen.cms.dao.ChannelMapper.selectByPrimaryKey" column="channel_id"></association>
-    <association property="category" javaType="category" select="com.yangjiachen.cms.dao.CategoryMapper.selectByPrimaryKey" column="category_id"></association>
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.yangjiachen.cms.domain.ArticleWithBLOBs" extends="BaseResultMap" >
     <result column="content" property="content" jdbcType="LONGVARCHAR" />
@@ -34,7 +32,7 @@
     content, summary
   </sql>
   
-  <select id="selects" resultMap="BaseResultMap">
+  <select id="selects" resultMap="ResultMapWithBLOBs">
   	 	select a.*,GROUP_CONCAT(c.unique_name) terms from cms_article a left join cms_article_term b 
   	 	on a.id=b.aid left join cms_term c on b.tid=c.id
   	    <where>

@@ -7,7 +7,7 @@ import com.yangjiachen.cms.domain.ArticleWithBLOBs;
 
 public interface ArticleMapper {
 
-	List<Article> selects(Article article);
+	List<ArticleWithBLOBs> selects(Article article);
 		
     int deleteByPrimaryKey(Integer id);
 

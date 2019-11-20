@@ -44,8 +44,6 @@
 			<td>序号</td>
 			<td>文章标题</td>
 			<td>文章作者</td>
-			<td>文章所属栏目</td>
-			<td>文章所属类型</td>
 			<td>是否热门</td>
 			<td>标签</td>
 			<td>文章状态</td>
@@ -56,8 +54,6 @@
 				<td>${index.index+1 }</td>
 				<td><a href="javascript:detail(${a.id })">${a.title }</a></td>
 				<td>${a.user.username }</td>
-				<td>${a.channel.name }</td>
-				<td>${a.category.name }</td>
 				<td>
 					<c:if test="${a.hot==0 }">
 						否

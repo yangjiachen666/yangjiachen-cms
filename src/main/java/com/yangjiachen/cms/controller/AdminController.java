@@ -84,7 +84,7 @@ public class AdminController {
 		if(article.getStatus()==null) {
 			article.setStatus(0);
 		}
-		PageInfo<Article> info = articleService.selects(article, page, pageSize);
+		PageInfo<ArticleWithBLOBs> info = articleService.selects(article, page, pageSize);
 		String pages = PageUtil.page(page, info.getPages(), "/admin/articles?status="+article.getStatus(), pageSize);
 		m.addAttribute("articles", info.getList());
 		m.addAttribute("article", article);

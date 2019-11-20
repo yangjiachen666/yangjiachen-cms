@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+@Document(indexName = "articles",type = "article")
 public class Article implements Serializable{
     /**
 	 * @fieldName: serialVersionUID
@@ -11,21 +16,17 @@ public class Article implements Serializable{
 	 * @Description: TODO
 	 */
 	private static final long serialVersionUID = 1L;
-
+	@Id
 	private Integer id;				//文章id
-
+	@Field(index = true,analyzer = "ik_smart",store = true,searchAnalyzer = "ik_smart",type = FieldType.text)
     private String title;			//文章标题
 
     private String picture;			//文章标题图片
 
     private Integer channelId;		//文章
     
-    private Channel channel;
-
     private Integer categoryId;
     
-    private Category category;
-
     private Integer userId;
     
     private User user;
@@ -177,23 +178,7 @@ public class Article implements Serializable{
     public void setUpdated(Date updated) {
         this.updated = updated;
     }
-
-	public Channel getChannel() {
-		return channel;
-	}
-
-	public void setChannel(Channel channel) {
-		this.channel = channel;
-	}
-
-	public Category getCategory() {
-		return category;
-	}
-
-	public void setCategory(Category category) {
-		this.category = category;
-	}
-
+    
 	public User getUser() {
 		return user;
 	}
@@ -202,11 +187,4 @@ public class Article implements Serializable{
 		this.user = user;
 	}
 
-	@Override
-	public String toString() {
-		return "Article [id=" + id + ", title=" + title + ", picture=" + picture + ", channelId=" + channelId
-				+ ", channel=" + channel + ", categoryId=" + categoryId + ", category=" + category + ", userId="
-				+ userId + ", user=" + user + ", hits=" + hits + ", hot=" + hot + ", status=" + status + ", deleted="
-				+ deleted + ", created=" + created + ", updated=" + updated + ", contentType=" + contentType + "]";
-	}
 }

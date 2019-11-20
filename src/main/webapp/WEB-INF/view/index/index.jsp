@@ -43,11 +43,11 @@
 			
 			
 			<!-- 展示分类文章 -->
-		<c:if test="${article.channelId!=null }">
+	
 				<div class="nav nav-tabs">
 					<ul class="nav">
 						<li class="nav-item">
-							<a class="nav-item nav-link ${article.categoryId==null?'active':'' }" href="?channelId=${article.channelId }">全部</a>
+							<a class="nav-item nav-link ${article.categoryId==null?'active':'' }" href="/?channelId=${article.channelId }">全部</a>
 						</li>
 						<c:forEach items="${categorys }" var="c">
 								<li class="nav-item">
@@ -70,10 +70,11 @@
 						 <hr>
 					</c:forEach>
 				</div>
+		<c:if test="${article.channelId!=null }">
 					<div>
 						${pages }
 					</div>
-				</c:if>
+		</c:if>
 		
 		
 			<!-- 热门文章和轮播图 -->
@@ -120,7 +121,6 @@
 	</div>
 			<br>
 			
-			
 			<!-- 文章展示 -->
 				<div style="margin-left: 10px">
 					<!-- 热门文章 -->
@@ -139,7 +139,7 @@
 						${pages }
 					</div>
 				</div>
-			</c:if>
+	</c:if>
 			</div>
 			
 			

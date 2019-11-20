@@ -55,10 +55,10 @@ public class ArticleServiceImpl implements ArticleService {
 	 * @see com.yangjiachen.cms.service.ArticleService#articles(com.yangjiachen.cms.domain.Article) 
 	 */
 	@Override
-	public PageInfo<Article> selects(Article article,Integer page,Integer pageSize) {
+	public PageInfo<ArticleWithBLOBs> selects(Article article,Integer page,Integer pageSize) {
 		PageHelper.startPage(page,pageSize);
-		List<Article> articles = articleMapper.selects(article);
-		return new PageInfo<Article>(articles);
+		List<ArticleWithBLOBs> articles = articleMapper.selects(article);
+		return new PageInfo<ArticleWithBLOBs>(articles);
 	}
 
 	/* (non Javadoc) 

@@ -45,8 +45,6 @@
 			<td>文章作者</td>
 			<td>文章发布日期</td>
 			<td>文章修改日期</td>
-			<td>文章所属栏目</td>
-			<td>文章所属类型</td>
 			<td>是否热门</td>
 			<td>文章点击量</td>
 			<td>文章状态</td>
@@ -58,8 +56,6 @@
 				<td>${a.user.username }</td>
 				<td><fmt:formatDate value="${a.created }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<td><fmt:formatDate value="${a.updated }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-				<td>${a.channel.name }</td>
-				<td>${a.category.name }</td>
 				<td>
 					<c:if test="${a.hot==0 }">
 						<button class="btn btn-outline-warning" onclick="hot(${a.id},this)">否</button>

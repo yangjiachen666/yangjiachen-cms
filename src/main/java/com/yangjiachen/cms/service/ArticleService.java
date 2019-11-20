@@ -25,7 +25,7 @@ import com.yangjiachen.cms.domain.Category;
  */
 public interface ArticleService {
 	
-	PageInfo<Article> selects(Article article,Integer page,Integer pageSize);
+	PageInfo<ArticleWithBLOBs> selects(Article article,Integer page,Integer pageSize);
 	
     int insertSelective(ArticleWithBLOBs record);
 

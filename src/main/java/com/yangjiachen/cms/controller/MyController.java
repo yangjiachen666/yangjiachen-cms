@@ -251,7 +251,7 @@ public class MyController {
 		if(article.getTerms()==null) {
 			article.setTerms("");
 		}
-		PageInfo<Article> info = articleService.selects(article, page, pageSize);
+		PageInfo<ArticleWithBLOBs> info = articleService.selects(article, page, pageSize);
 
 		String pages = PageUtil.page(page, info.getPages(),"/my/selectsByUser?status="+article.getStatus()+"&title="+article.getTitle()+"&terms="+article.getTerms(), pageSize);
 		model.addAttribute("articles", info.getList());

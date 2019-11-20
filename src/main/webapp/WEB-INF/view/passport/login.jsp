@@ -70,8 +70,9 @@
 				password:{
 					required:"密码不能为空",
 				}
-			}
+			},
 		})
 	})
+	
 </script>
 </html>

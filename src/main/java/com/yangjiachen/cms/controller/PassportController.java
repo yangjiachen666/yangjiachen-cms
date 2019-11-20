@@ -14,6 +14,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +40,8 @@ import com.yangjiachen.cms.vo.UserVO;
 public class PassportController {
 	@Resource
 	private UserService userService;
+	@Autowired
+	private RedisTemplate redisTemplate;
 	
 	/**
 	 * 
@@ -88,8 +92,13 @@ public class PassportController {
 	 * @return: String
 	 */
 	@GetMapping("login")
-	public String login() {
-		return "passport/login";
+	public String login(HttpServletRequest request) {
+		User user = (User) redisTemplate.opsForValue().get(request.getSession().getId());
+		if(null==user) {
+			return "passport/login";
+		}else {
+			return "forward:/index";
+		}
 	}
 	/**
 	 * 
@@ -135,6 +144,7 @@ public class PassportController {
 				User u = userService.getUserByUsername(user);
 				if(u.getRole().equals("0") && u.getLocked()!=1) {
 					session.setAttribute("user", u);
+					redisTemplate.opsForValue().set(session.getId(), u);
 					return "redirect:/index";
 				}
 				if(u.getRole().equals("1")) {
