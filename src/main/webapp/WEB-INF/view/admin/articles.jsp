@@ -48,6 +48,7 @@
 			<td>是否热门</td>
 			<td>文章点击量</td>
 			<td>文章状态</td>
+			<td>操作</td>
 		</tr>
 		<c:forEach items="${articles }" var="a" varStatus="index">
 			<tr align="center" valign="middle">
@@ -66,8 +67,14 @@
 				</td>
 				<td>${a.hits }条点击</td>
 				<td>${a.status==0?'未审核':a.status==1?'已审核':'驳回' }</td>
+				<td>
+					<a href="javascript:void(0)" name="sc" data="/admin/delete?id=${a.id}" style="color:red">删除</a>&nbsp;&nbsp;&nbsp;
+					<a href="#" style="color:red">修改</a>		
+				</td>
 			</tr>
 		</c:forEach>
+		
+		
 	</table>
 	<div>
 		${pages }
@@ -76,6 +83,10 @@
 <script type="text/javascript">
 $(function(){
 	$("[name=status]").val('${article.status}')
+	$("[name=sc]").click(function(){
+		var url = $(this).attr("data");
+		$("#content-wrapper").load(url);
+	})
 })
 function getArticleByTitle(){
 	var title = $("[name=title]").val();

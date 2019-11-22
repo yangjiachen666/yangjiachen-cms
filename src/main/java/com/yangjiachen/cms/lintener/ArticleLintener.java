@@ -38,9 +38,21 @@ public class ArticleLintener implements MessageListener<String, String>{
 	@Override
 	public void onMessage(ConsumerRecord<String, String> data) {
 		String value = data.value();
-		ArticleWithBLOBs bs = JSON.parseObject(value, ArticleWithBLOBs.class);
-		articleMapper.insertSelective(bs);
-		System.err.println("添加完成了");
+		System.err.println(value+"============");
+		if(value.startsWith("article")) {
+			String[] split = value.split("=");
+			String id = split[1];
+			System.err.println("接收到id了==="+id);
+			ArticleWithBLOBs bs = articleMapper.selectByPrimaryKey(Integer.parseInt(id));
+			bs.setHits(bs.getHits()+1);
+			articleMapper.updateByPrimaryKeySelective(bs);
+			System.err.println("修改完成了");
+		}else {
+			ArticleWithBLOBs bs = JSON.parseObject(value, ArticleWithBLOBs.class);
+			articleMapper.insertSelective(bs);
+			System.err.println("添加完成了");
+		}
+		
 	}
 	
 }

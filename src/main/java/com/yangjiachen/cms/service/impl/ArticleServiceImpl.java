@@ -123,5 +123,18 @@ public class ArticleServiceImpl implements ArticleService {
 	public int updateByPrimaryKeySelective(ArticleWithBLOBs record) {
 		// TODO Auto-generated method stub
 		return articleMapper.updateByPrimaryKeySelective(record);
+	}
+
+	/* (non Javadoc) 
+	 * @Title: deleteByPrimaryKey
+	 * @Description: TODO
+	 * @param id
+	 * @return 
+	 * @see com.yangjiachen.cms.service.ArticleService#deleteByPrimaryKey(java.lang.Integer) 
+	 */
+	@Override
+	public int deleteByPrimaryKey(Integer id) {
+		// TODO Auto-generated method stub
+		return articleMapper.deleteByPrimaryKey(id);
 	}	
 }

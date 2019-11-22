@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -84,6 +86,12 @@ public class indexController {
 	private ArticleRespositer articleRespositer;
 	@Autowired
 	private ElasticsearchTemplate elasticsearchTemplate;
+	@Autowired
+	private ThreadPoolTaskExecutor executor;
+	/*
+	 * @Autowired private KafkaTemplate<String, String> kafkaTemplate;
+	 */
+	
 	/**
 	 * 
 	 * @Title: search 
@@ -279,9 +287,24 @@ public class indexController {
 	 * @return: String
 	 */
 	@GetMapping("select")
-	public String select(Model model, Integer id,@RequestParam(defaultValue = "1")Integer page,@RequestParam(defaultValue = "10")Integer pageSize) {
+	public String select(Model model,HttpServletRequest request, Integer id,@RequestParam(defaultValue = "1")Integer page,@RequestParam(defaultValue = "10")Integer pageSize) {
 		ArticleWithBLOBs article = articleService.selectByPrimaryKey(id);
 		PageInfo<Comment> info = commentService.selects(id, page, pageSize);
+		String str = "Hits_"+id+"_"+request.getRemoteAddr();
+		System.err.println(str);
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				String value = (String) redisTemplate.opsForValue().get(str);
+				if(null==value) {
+					redisTemplate.opsForValue().set(str, "",5,TimeUnit.MINUTES);
+					article.setHits(article.getHits()+1);
+					articleService.updateByPrimaryKeySelective(article);
+					System.err.println("修改成功");
+				}
+			}
+		});
+//		kafkaTemplate.send("articles","article_id="+id);
 		String pages = PageUtil.page(page, info.getPages(), "/select?id="+id , pageSize);
 		model.addAttribute("article", article);
 		model.addAttribute("comments", info.getList());

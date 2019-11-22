@@ -57,6 +57,24 @@ public class AdminController {
 	@Resource
 	private FriendlyService friendlyService;
 	
+	
+	/**
+	 * 
+	 * @Title: deleteArticle 
+	 * @Description: 完成文章的删除操作
+	 * @param id
+	 * @return: void
+	 */
+	@RequestMapping("delete")
+	public String deleteArticle(Integer id) {
+		articleService.deleteByPrimaryKey(id);
+		return "redirect:/admin/articles";
+	}
+	
+	
+	
+	
+	
 	/**
 	 * 
 	 * @Title: users 

@@ -4,20 +4,24 @@
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
-
-
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
 	<!-- 加载redis配置文件 -->
 	<import resource="classpath:redis.xml"/>
 	<!-- 加载kafka配置文件 -->
 	<import resource="classpath:consumer.xml"/>
+	<!-- <import resource="classpath:producer.xml"/> -->
 	<!-- 加载elastic配置文件 -->
 	<import resource="classpath:es.xml"/>
 
+	<!-- 配置spring线程池 -->
+	<task:executor id="executor" pool-size="10" queue-capacity="10" rejection-policy="DISCARD_OLDEST" />
+	
 	<!-- 1、注解扫描器 -->
 	<context:component-scan base-package="com.yangjiachen.cms" >
 		<!-- 排除要要扫描的controller -->
@@ -43,7 +47,6 @@
 		</property>
 	</bean>
 
-
 	<!--4、 配置mybatis SqlSessionFactory -->
 	<bean id="sqlSessionFactory"
 		class="org.mybatis.spring.SqlSessionFactoryBean" scope="singleton" autowire="default">
@@ -58,8 +61,6 @@
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
-
-
 
 	<!--6、 配置事务 transaction-manager:表示关联的事务管理器是谁 -->
 	<tx:advice transaction-manager="transactionManager"
@@ -85,7 +86,7 @@
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut" />
 
 	</aop:config>
-
+	
 	<!--8 扫描mapper -->
 
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
