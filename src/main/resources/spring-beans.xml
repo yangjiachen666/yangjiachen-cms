@@ -15,7 +15,7 @@
 	<import resource="classpath:redis.xml"/>
 	<!-- 加载kafka配置文件 -->
 	<import resource="classpath:consumer.xml"/>
-	<!-- <import resource="classpath:producer.xml"/> -->
+	<import resource="classpath:producer.xml"/>
 	<!-- 加载elastic配置文件 -->
 	<import resource="classpath:es.xml"/>
 

@@ -13,6 +13,8 @@ package com.yangjiachen.cms.lintener;
 import javax.annotation.Resource;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.listener.MessageListener;
 
 import com.alibaba.fastjson.JSON;
@@ -26,7 +28,8 @@ import com.yangjiachen.cms.domain.ArticleWithBLOBs;
  * @date: 2019年11月13日 下午2:52:19  
  */
 public class ArticleLintener implements MessageListener<String, String>{
-
+	@Autowired
+	private RedisTemplate redisTemplate;
 	@Resource
 	private ArticleMapper articleMapper;
 	/* (non Javadoc) 
@@ -47,11 +50,18 @@ public class ArticleLintener implements MessageListener<String, String>{
 			bs.setHits(bs.getHits()+1);
 			articleMapper.updateByPrimaryKeySelective(bs);
 			System.err.println("修改完成了");
+		}else if(value.startsWith("save")) {
+			ArticleWithBLOBs abb = (ArticleWithBLOBs) redisTemplate.opsForValue().get(value);
+			int i = articleMapper.insertSelective(abb);
+			if(i>0) {
+				redisTemplate.delete(value);
+			}
 		}else {
 			ArticleWithBLOBs bs = JSON.parseObject(value, ArticleWithBLOBs.class);
 			articleMapper.insertSelective(bs);
 			System.err.println("添加完成了");
 		}
+		
 		
 	}
 	

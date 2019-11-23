@@ -36,5 +36,16 @@ public class ArticleWithBLOBs extends Article {
     public void setSummary(String summary) {
         this.summary = summary == null ? null : summary.trim();
     }
+
+	/* (non Javadoc) 
+	 * @Title: toString
+	 * @Description: TODO
+	 * @return 
+	 * @see java.lang.Object#toString() 
+	 */
+	@Override
+	public String toString() {
+		return "ArticleWithBLOBs [content=" + content ;
+	}
     
 }
