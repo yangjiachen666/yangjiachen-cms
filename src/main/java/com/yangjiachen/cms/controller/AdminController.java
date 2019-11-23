@@ -29,7 +29,6 @@ import com.yangjiachen.cms.domain.ArticleWithBLOBs;
 import com.yangjiachen.cms.domain.Friendly;
 import com.yangjiachen.cms.domain.Special;
 import com.yangjiachen.cms.domain.SpecialArticle;
-import com.yangjiachen.cms.domain.Speciala;
 import com.yangjiachen.cms.domain.User;
 import com.yangjiachen.cms.exception.CMSException;
 import com.yangjiachen.cms.service.ArticleService;
